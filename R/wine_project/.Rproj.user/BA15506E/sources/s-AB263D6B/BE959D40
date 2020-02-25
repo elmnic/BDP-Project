@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1553208112794.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "BE959D40",
+    "lastKnownWriteTime" : 1554214092,
+    "last_content_update" : 1554214092,
+    "path" : "E:/Dropbox/Skola/Data Science/BDP/Project/R/wine_project/wine-mining.R",
+    "project_path" : "wine-mining.R",
+    "properties" : {
+        "cursorPosition" : "9,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

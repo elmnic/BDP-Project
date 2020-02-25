@@ -1,0 +1,32 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1554248865084.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "80DE94D1",
+    "lastKnownWriteTime" : 0,
+    "last_content_update" : 1554248865084,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "D10CE1C3",
+        "caption" : "ohe_tbl",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=ohe_tbl&cache_key=D10CE1C3",
+        "displayedObservations" : 36,
+        "environment" : "",
+        "object" : "ohe_tbl",
+        "preview" : 0,
+        "totalObservations" : 36,
+        "variables" : 103723
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

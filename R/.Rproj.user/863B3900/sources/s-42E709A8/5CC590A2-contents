@@ -1,0 +1,52 @@
+library(tm)
+library(SnowballC)
+library(dplyr)
+library(tidyverse)
+toSpace <- content_transformer(function(x, pattern) {return (gsub(pattern, " ", x))})
+
+file <- "./wine-reviews/winemag-data-130k-v2.csv"
+csv <- read.csv(file, header = TRUE)
+keepCols <- c("doc_id", "text", "points", "taster_name")
+csv <- csv[keepCols]
+csv2 <- aggregate(csv$text, list(csv$taster_name), toString)
+
+colnames(csv2)[names(csv2) == "Group.1"] <- "doc_id"
+colnames(csv2)[names(csv2) == "x"] <- "text"
+
+corpGrouped <- Corpus(DataframeSource(csv2))
+corpGrouped <- tm_map(corpGrouped, toSpace, "-")
+corpGrouped <- tm_map(corpGrouped, toSpace, "–")
+corpGrouped <- tm_map(corpGrouped, toSpace, "%")
+corpGrouped <- tm_map(corpGrouped, content_transformer(tolower))
+corpGrouped <- tm_map(corpGrouped, removeNumbers)
+corpGrouped <- tm_map(corpGrouped, removePunctuation)
+corpGrouped <- tm_map(corpGrouped, stripWhitespace)
+corpGrouped <- tm_map(corpGrouped, removeWords, stopwords("english"))
+dtm <- DocumentTermMatrix(corpGrouped)
+
+inspect(dtm[1:5, 1:10])
+freq <- colSums(as.matrix(dtm))
+length(freq)
+ord <- order(freq,decreasing=TRUE)
+freq[head(ord)]
+
+
+# writeLines(as.character(corpGrouped[[1]]))
+
+
+# corp <- Corpus(DataframeSource(csv))
+# corp <- tm_map(corp, toSpace, "-")
+# corp <- tm_map(corp, toSpace, "–")
+# corp <- tm_map(corp, toSpace, "%")
+# corp <- tm_map(corp, content_transformer(tolower))
+# corp <- tm_map(corp, removeNumbers)
+# corp <- tm_map(corp, removePunctuation)
+# corp <- tm_map(corp, removeWords, stopwords("english"))
+# corp <- tm_map(corp, stripWhitespace)
+# writeLines(as.character(corp[[1]]))
+# 
+# corpStemmed <- tm_map(corp, stemDocument)
+# writeLines(as.character(corpStemmed[[1]]))
+# 
+# dtm <- DocumentTermMatrix(corp)
+# inspect(dtm[1:2, 1:20])

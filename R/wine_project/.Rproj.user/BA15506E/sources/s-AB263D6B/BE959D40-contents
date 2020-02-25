@@ -1,0 +1,73 @@
+library(tm)
+library(SnowballC)
+library(dplyr)
+library(tidyverse)
+library(ngram)
+library(wordcloud)
+library(slam)
+library(stringr)
+
+toSpace <- function(x, pattern) {
+    return (gsub(pattern, " ", x))
+}
+toBlank <- function(x, pattern) {
+    return (gsub(pattern, "", x))
+}
+
+# Needed for preprocessing dataset #
+file <- "./winemag-data-130k-v2.csv"
+csv <- read.csv(file, header = TRUE)
+#authFrame <- aggregate(csv['text'], csv['taster_name'], paste, collapse = ' ')
+#colnames(authFrame)[names(authFrame) == "taster_name"] <- "doc_id"
+#authFrame <- authFrame[-c(1),] # Remove anonymous authors
+
+# Needed for machine learning #
+keepCols <- c("doc_id", "text", "points", "taster_name")
+dataML <- csv[keepCols]
+
+dataML <- dataML[!(dataML$taster_name == ""),]
+dataML 
+
+i <- sapply(dataML, is.factor)
+dataML[i] <- lapply(dataML[i], as.character)
+dataML$text <- lapply(dataML$text, tolower)
+dataML$text <- lapply(dataML$text, toSpace, "-")
+dataML$text <- lapply(dataML$text, toSpace, "–")
+dataML$text <- lapply(dataML$text, toSpace, "%")
+dataML$text <- lapply(dataML$text, toSpace, "“")
+dataML$text <- lapply(dataML$text, toSpace, "”")
+dataML$text <- lapply(dataML$text, toSpace, "\\d")
+dataML$text <- lapply(dataML$text, toBlank, "[[:punct:]]")
+dataML$text <- lapply(dataML$text, removeWords, stopwords("english"))
+dataML$text <- lapply(dataML$text, toBlank, "^\\s+")
+dataML$text <- lapply(dataML$text, stemDocument)
+dataML$text <- as.character(dataML$text)
+
+textData <- dataML$text
+dataML$text <- textData
+
+# Get top 500~ words used
+word_corpus <- Corpus(VectorSource(dataML$text))
+dtm <- DocumentTermMatrix(word_corpus)
+inspect(dtm[1:4, 1:5])
+
+# Sum all terms
+agg_dtm <- col_sums(dtm) %>%
+    sort(decreasing = T)
+agg_dtm <- agg_dtm[1:500]
+keepWords <- names(agg_dtm)
+head(agg_dtm, 5)
+
+# Filter the most common terms from the data frame
+dataML$text <- lapply(dataML$text, FUN = function(x) {
+    lapply(strsplit(x, "\\s"), FUN = function(y) {
+        paste(intersect(y, keepWords), collapse=" ")
+        })
+    })
+
+dataML$text <- unlist(dataML$text)
+dataML$text[is.na(dataML$text)] <- ""
+
+# Write to csv file
+write.csv(dataML, "./ml_docs/wine_ml.csv", row.names=F)
+
